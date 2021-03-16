@@ -1,14 +1,14 @@
 package io.averest.observer.domain
 
+import io.averest.observer.infrastructure.Accelerator
 import io.averest.observer.infrastructure.Designator
-import io.averest.observer.infrastructure.Runner
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-abstract class Launcher : Runner {
+abstract class Launcher : Accelerator {
     override val runEventLoop = true
     private val executor: ExecutorService = Executors.newFixedThreadPool(64)
     private val sleepTimer = 120_000L

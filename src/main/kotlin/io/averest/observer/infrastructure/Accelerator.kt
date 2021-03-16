@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
 
-interface Runner {
+interface Accelerator {
     val runEventLoop: Boolean
 
     /**
