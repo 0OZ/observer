@@ -28,9 +28,7 @@ class Runner() : Launcher() {
 }
 
 
-class Event() : Designator {
-    override val identifier = "identifier123"
-
+class Event(override val identifier: String = "ev1") : Designator {
     override fun start() {
         // TODO("do something cpu intensive")
     }
