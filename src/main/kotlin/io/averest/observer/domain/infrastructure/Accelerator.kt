@@ -1,4 +1,4 @@
-package io.averest.observer.infrastructure
+package io.averest.observer.domain.infrastructure
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

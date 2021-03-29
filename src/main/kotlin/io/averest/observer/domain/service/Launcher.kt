@@ -1,7 +1,7 @@
-package io.averest.observer.domain
+package io.averest.observer.domain.service
 
-import io.averest.observer.infrastructure.Accelerator
-import io.averest.observer.infrastructure.Designator
+import io.averest.observer.domain.infrastructure.Accelerator
+import io.averest.observer.domain.infrastructure.Designator
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,6 +16,11 @@ abstract class Launcher : Accelerator {
     companion object {
         var eventLoopIsRunning = false
     }
+
+    override fun start() {
+        addEventLoops {}
+    }
+
 
     fun addEventLoops(eventLoop: CoroutineScope.() -> Unit) {
         if (!eventLoopIsRunning) {
@@ -38,7 +43,7 @@ abstract class Launcher : Accelerator {
         launch(executor.asCoroutineDispatcher()) {
             eventList.forEach { event ->
                 val eventClass = async { awaitCall(call, event) }
-                eventClass.await()?.let { Subscriber(it).addJob() }
+                eventClass.await()?.let { Subscriber(it).call() }
             }
         }
 
@@ -53,7 +58,7 @@ abstract class Launcher : Accelerator {
         val ts = SimpleDateFormat("HH:mm:ss").format(Date())
         val msg = String.format(
             "%-25s%5s",
-            "[${this::class.simpleName}|$ts]: ",
+            "[${this::class.simpleName}|${Thread.currentThread()}|$ts]: ",
             message.toString()
         )
         println(msg)

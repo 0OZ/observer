@@ -1,6 +1,6 @@
-package io.averest.observer.domain
+package io.averest.observer.domain.model
 
-data class Identifier(
+data class Tag(
     val jobIdent: String,
     val type: String,
     val id: String = jobIdent + type,
