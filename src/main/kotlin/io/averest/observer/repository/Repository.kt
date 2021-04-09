@@ -2,7 +2,7 @@ package io.averest.observer.repository
 
 import kotlinx.coroutines.Job
 
-class Issuer {
+class Repository {
     companion object {
         val jobs: MutableMap<String, Job> = mutableMapOf()
     }

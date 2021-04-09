@@ -1,4 +1,4 @@
-package io.averest.observer.domain.infrastructure
+package io.averest.observer.infrastructure
 
 interface Designator {
     /**

@@ -1,4 +1,4 @@
-package io.averest.observer.domain.infrastructure
+package io.averest.observer.infrastructure
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,7 +12,7 @@ interface Accelerator {
      */
     fun start()
 
-
+    
     /**
      *  add events to event loop
      */

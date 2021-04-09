@@ -1,7 +1,8 @@
 package io.averest.observer.domain.service
 
-import io.averest.observer.domain.infrastructure.Accelerator
-import io.averest.observer.domain.infrastructure.Designator
+import io.averest.observer.domain.application.Subscriber
+import io.averest.observer.infrastructure.Accelerator
+import io.averest.observer.infrastructure.Designator
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -15,6 +16,9 @@ abstract class Launcher : Accelerator {
 
     companion object {
         var eventLoopIsRunning = false
+        fun stop() {
+            eventLoopIsRunning = false
+        }
     }
 
     override fun start() {

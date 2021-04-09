@@ -1,7 +1,7 @@
-package io.averest.observer.domain.service
+package io.averest.observer.domain.application
 
-import io.averest.observer.domain.event.Identifier
-import io.averest.observer.domain.infrastructure.Designator
+import io.averest.observer.domain.factory.Issuer
+import io.averest.observer.infrastructure.Designator
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -12,8 +12,7 @@ import java.util.concurrent.Executors
 class Subscriber(private val callable: Designator) {
     private val poolSize = 64
     private val executor = Executors.newFixedThreadPool(poolSize)
-    private val identifier = Identifier(callable.javaClass.simpleName, callable.identifier)
-
+    private val identifier = Issuer(callable.javaClass.simpleName, callable.identifier)
 
     fun call() {
         if (identifier.getJob() == null || identifier.getJob()!!.isCompleted) {
