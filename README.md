@@ -1,4 +1,4 @@
-## observer:
+## JobHandler:
 
 the idea is that the observer processes a list of jobs or classes. without starting one of them twice. in a defined
 interval this action is repeated.
