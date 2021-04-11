@@ -12,7 +12,9 @@ import java.util.concurrent.Executors
 abstract class Launcher : Accelerator {
     override val runEventLoop = true
     private val executor: ExecutorService = Executors.newFixedThreadPool(64)
-    private val sleepTimer = 120_000L
+
+    //    private val sleepTimer = 120_000L
+    private val sleepTimer = 10_000L
 
     companion object {
         var eventLoopIsRunning = false
@@ -30,33 +32,24 @@ abstract class Launcher : Accelerator {
         if (!eventLoopIsRunning) {
             GlobalScope.launch {
                 eventLoop()
-                eventSuspender()
+                carrier()
                 eventLoopIsRunning = runEventLoop
             }
         }
     }
 
-    private fun CoroutineScope.eventSuspender() = launch(executor.asCoroutineDispatcher()) {
+    private fun CoroutineScope.carrier() = launch(executor.asCoroutineDispatcher()) {
         while (eventLoopIsRunning) {
             addEvent()
             delay(sleepTimer)
         }
     }
 
-    fun <T> CoroutineScope.launchJobs(eventList: List<T>, call: (callableEvent: T) -> Designator?) =
-        launch(executor.asCoroutineDispatcher()) {
-            eventList.forEach { event ->
-                val eventClass = async { awaitCall(call, event) }
-                eventClass.await()?.let { Subscriber(it).call() }
-            }
+    fun <T> CoroutineScope.launchJobs(identList: List<T>, call: (jobIdentifier: T) -> Designator) {
+        identList.forEach { ident ->
+            launch(executor.asCoroutineDispatcher()) { Subscriber(call(ident)).call() }
         }
-
-
-    private fun <T> awaitCall(
-        buildEvent: (event: T) -> Designator?,
-        event: T,
-    ): Designator? = buildEvent(event)
-
+    }
 
     fun printer(message: Any) {
         val ts = SimpleDateFormat("HH:mm:ss").format(Date())
