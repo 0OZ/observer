@@ -9,5 +9,5 @@ interface Designator {
     /**
      * to execute the Job
      */
-    fun run()
+    fun launchJob()
 }
