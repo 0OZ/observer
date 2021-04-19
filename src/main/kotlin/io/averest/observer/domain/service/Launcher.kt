@@ -1,20 +1,19 @@
 package io.averest.observer.domain.service
 
-import io.averest.observer.domain.application.Subscriber
+import io.averest.observer.domain.application.Publisher
 import io.averest.observer.infrastructure.Accelerator
 import io.averest.observer.infrastructure.Designator
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
-import java.util.*
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-abstract class Launcher : Accelerator {
-    override val runEventLoop = true
-    private val executor: ExecutorService = Executors.newFixedThreadPool(64)
-
-    //    private val sleepTimer = 120_000L
-    private val sleepTimer = 10_000L
+abstract class Launcher(
+    override val runEventLoop: Boolean = true,
+    private val executor: ExecutorService = Executors.newFixedThreadPool(64),
+    private val sleepTimer: Long = 1_000L
+) : Accelerator {
+    val logger = LogManager.getFormatterLogger(this.javaClass)!!
 
     companion object {
         var eventLoopIsRunning = false
@@ -40,24 +39,17 @@ abstract class Launcher : Accelerator {
 
     private fun CoroutineScope.carrier() = launch(executor.asCoroutineDispatcher()) {
         while (eventLoopIsRunning) {
+            logger.info("looping")
             addEvent()
             delay(sleepTimer)
         }
     }
 
-    fun <T> CoroutineScope.launchJobs(identList: List<T>, call: (jobIdentifier: T) -> Designator) {
-        identList.forEach { ident ->
-            launch(executor.asCoroutineDispatcher()) { Subscriber(call(ident)).call() }
+    fun <T> CoroutineScope.launchJobs(identList: List<T>, callable: (jobIdentifier: T) -> Designator) {
+        identList.forEach {
+            launch {
+                Publisher(callable(it)).commit()
+            }
         }
-    }
-
-    fun printer(message: Any) {
-        val ts = SimpleDateFormat("HH:mm:ss").format(Date())
-        val msg = String.format(
-            "%-25s%5s",
-            "[${this::class.simpleName}|${Thread.currentThread()}|$ts]: ",
-            message.toString()
-        )
-        println(msg)
     }
 }
