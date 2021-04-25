@@ -4,38 +4,24 @@ the idea is that the observer processes a list of jobs or classes. without start
 interval this action is repeated.
 
 ```kotlin
-class Runner() : Launcher() {
-    private var eventList: List<String> = repository.findAll()
+class Runner(
+    private val identifiers: List<String> = listOf("foo","boo")
+) : Launcher(sleepTimer = 2_000L) {
 
-    override fun start() {
-        addEventLoops {
-            event()
-        }
-    }
-
-    // write own events
-    fun CoroutineScope.event() = launch {
-        while (runEventLoop) {
-            delay(60_000)
-            // do something
-        }
-    }
-
-    // add jobs to default event loop
-    override fun CoroutineScope.addEvent() = launch {
-        launchJobs(eventList) { Event(it) }
+    override fun commitJobs() {
+        launchJobs(jobList) { Excavator(it) }
     }
 }
 
 
-class Event() : Designator {
-    override val identifier = "identifier123"
+class Job(
+    override val identifier: String = "foo"
+) : Designator {
 
     override fun start() {
-        // TODO("do something cpu intensive")
+        // TODO("do something intensive")
     }
 }
-
 
 ```
 
