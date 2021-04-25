@@ -1,4 +1,4 @@
-package io.averest.observer.domain.model
+package io.averest.observer.domain.launcher.model
 
 data class Tag(
     val jobIdent: String,

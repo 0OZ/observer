@@ -1,6 +1,6 @@
-package io.averest.observer.domain.aggregate
+package io.averest.observer.domain.launcher.aggregate
 
-import io.averest.observer.domain.model.Tag
+import io.averest.observer.domain.launcher.model.Tag
 import io.averest.observer.repository.JobRepository
 import kotlinx.coroutines.Job
 
