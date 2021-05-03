@@ -1,5 +1,6 @@
 package io.averest.observer.domain.launcher.service
 
+import io.averest.observer.domain.launcher.MainLoop.running
 import io.averest.observer.domain.launcher.application.Publisher
 import io.averest.observer.infrastructure.Accelerator
 import io.averest.observer.infrastructure.Designator
@@ -13,22 +14,21 @@ import kotlin.concurrent.thread
 
 abstract class Launcher(
     override val runEventLoop: Boolean = true,
-    private val executor: ExecutorService =
+    val executor: ExecutorService =
         Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()),
-    private val sleepTimer: Long = 120_000L
+    val sleepTimer: Long = 120_000L
 ) : Accelerator {
     val logger = LogManager.getFormatterLogger(this.javaClass)!!
 
     companion object {
-        var mainLoopRunning = false
         fun stop() {
-            mainLoopRunning = false
+            running = false
         }
     }
 
     override fun start() {
-        if (!mainLoopRunning) {
-            mainLoopRunning = runEventLoop
+        if (!running) {
+            running = runEventLoop
             mainLoop()
             optionalCall()
         }
@@ -36,15 +36,16 @@ abstract class Launcher(
 
 
     override fun mainLoop() = thread {
-        while (mainLoopRunning) {
+        while (running) {
             executor.execute { commitJobs() }
             logger.info(JobRepository.jobs.map { mapOf(it.key to it.value.isActive) })
             sleep(sleepTimer)
         }
+        executor.shutdown()
     }
+    
 
-
-    fun <T> launchJobs(identList: List<T>, callable: (jobIdentifier: T) -> Designator) {
+    fun <T> commit(identList: List<T>, callable: (jobIdentifier: T) -> Designator) {
         identList.forEach { commit(callable(it)) }
     }
 

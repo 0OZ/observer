@@ -5,14 +5,11 @@ import kotlinx.coroutines.Job
 
 interface Accelerator {
     val runEventLoop: Boolean
-
     /**
      * Launch the Application
      */
     fun start()
-
     fun mainLoop(): Thread
-    fun optionalCall(): Job
-
+    fun optionalCall(): Thread
     fun commitJobs()
 }
