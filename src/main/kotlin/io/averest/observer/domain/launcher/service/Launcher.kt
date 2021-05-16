@@ -49,5 +49,5 @@ abstract class Launcher(
         identList.forEach { commit(callable(it)) }
     }
 
-    private fun commit(job: Designator) = Publisher(job, executor.asCoroutineDispatcher()).commit()
+    private fun commit(job: Designator) = Publisher(job).commit()
 }
