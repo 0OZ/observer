@@ -15,7 +15,7 @@ class Publisher(
     @ObsoleteCoroutinesApi
     fun commit() {
         if (identifier.getJob() == null || identifier.getJob()!!.isCompleted) {
-            val context = newSingleThreadContext(identifier.ident)
+            val context = newFixedThreadPoolContext(Runtime.getRuntime().availableProcessors() * 2, identifier.ident)
             val job = GlobalScope.launch(context) { callable.launchJob() }
             identifier.setJob(job)
             logger.info("${identifier.type}${identifier.ident} subscribe ✓ ${job.isActive}")
